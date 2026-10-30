@@ -10,8 +10,6 @@ ro.ril.telephony.nstrings=4
 # EGL blobs crash on screen off
 ro.egl.destroy_after_detach=true
 
-# Disable colorfade, which can cause crash when sleeping
-ro.displaypower.colorfade=false
 
 persist.logcat.enabled=0
 

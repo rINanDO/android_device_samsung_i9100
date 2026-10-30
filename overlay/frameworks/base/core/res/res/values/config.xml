@@ -141,4 +141,7 @@
 
     <!-- Minimum screen brightness allowed by the power manager. -->
     <integer name="config_screenBrightnessDim">29</integer>
+
+    <!-- Disable ColorFade, which can crash when the screen turns off. -->
+    <bool name="config_displayColorFadeDisabled">true</bool>
 </resources>
