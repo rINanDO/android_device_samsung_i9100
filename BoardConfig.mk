@@ -25,7 +25,7 @@ TARGET_BOARD_INFO_FILE := device/samsung/i9100/board-info.txt
 TARGET_SPECIFIC_HEADER_PATH += device/samsung/i9100/include
 
 # Bluetooth
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/i9100/bluetooth
+$(call soong_config_set,brcm_libbt,bdroid_buildcfg_include_dir,device/samsung/i9100/bluetooth)
 
 # Inline kernel building
 TARGET_KERNEL_SOURCE := kernel/samsung/smdk4412
