@@ -13,7 +13,5 @@ ro.egl.destroy_after_detach=true
 
 persist.logcat.enabled=0
 
-ro.config.low_ram=1
-
 # Linear brightness slider
 sys.brightness.disable_gamma_conversion=true
