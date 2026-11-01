@@ -11,7 +11,5 @@ ro.ril.telephony.nstrings=4
 ro.egl.destroy_after_detach=true
 
 
-persist.logcat.enabled=0
-
 # Linear brightness slider
 sys.brightness.disable_gamma_conversion=true
