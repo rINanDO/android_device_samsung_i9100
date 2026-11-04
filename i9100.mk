@@ -27,6 +27,10 @@ PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := hdpi
 PRODUCT_LOCALES += hdpi
 
+# A default wallpaper sized for the 480x800 screen
+PRODUCT_PACKAGES += \
+    WallpaperOverlayI9100
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.lcd_density=200
 

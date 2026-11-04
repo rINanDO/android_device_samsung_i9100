@@ -1,0 +1,5 @@
+runtime_resource_overlay {
+    name: "WallpaperOverlayI9100",
+    sdk_version: "current",
+    product_specific: true,
+}

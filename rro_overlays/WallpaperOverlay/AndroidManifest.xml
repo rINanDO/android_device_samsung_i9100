@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- An 800x800 default wallpaper instead of Lineage's 1080x1080 one, which is
+     decoded at every boot to fill a 480x800 screen. Priority 2 so it applies
+     after the auto-generated product RRO (priority 1) that ships Lineage's. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.lineageos.overlay.i9100.wallpaper">
+    <application android:hasCode="false" />
+    <overlay
+      android:targetPackage="android"
+      android:isStatic="true"
+      android:priority="2"/>
+</manifest>
