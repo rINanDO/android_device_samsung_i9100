@@ -21,6 +21,10 @@ PRODUCT_RELEASE_NAME := GT-I9100
 TARGET_SCREEN_HEIGHT := 800
 TARGET_SCREEN_WIDTH := 480
 TARGET_BOOTANIMATION_HALF_RES := true
+# The stock animation at 15 fps (every 4th frame) instead of 60: at 60 fps
+# SurfaceFlinger and bootanimation take enough CPU to slow the boot by
+# ~13 s and make WindowManager hit its 30 s boot timeout.
+TARGET_BOOTANIMATION := device/samsung/i9100/bootanimation/bootanimation.zip
 
 # Inherit some common Lineage stuff.
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
