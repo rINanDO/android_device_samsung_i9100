@@ -24,6 +24,13 @@
 #include <sys/select.h>
 #include <dlfcn.h>
 #include <cstring>
+#include <set>
+#include <string>
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <linux/input.h>
 
 #include "ak8973b.h"
 
@@ -52,6 +59,45 @@ int stub_set_delay(uint32_t sensor_type, uint64_t delay) {
     return -ENODEV;
 }
 
+/* How long to wait for ueventd to create the node of libakm's uinput device. */
+static const int kCompassOpenTries = 60;
+static const useconds_t kCompassOpenDelayUs = 50000;
+
+static std::set<std::string> listInputNodes() {
+    std::set<std::string> nodes;
+    DIR *dir = opendir("/dev/input");
+    if (dir) {
+        struct dirent *de;
+        while ((de = readdir(dir)))
+            nodes.insert(de->d_name);
+        closedir(dir);
+    }
+    return nodes;
+}
+
+/* Like openInput(), but only tries the nodes that are not in known. Opening
+ * the others again has side effects: the touchscreen resets when its node is
+ * opened and closed.
+ */
+static int openNewInput(const char *inputName, std::set<std::string> &known) {
+    for (const std::string &node : listInputNodes()) {
+        if (known.count(node))
+            continue;
+        std::string path = "/dev/input/" + node;
+        int fd = open(path.c_str(), O_RDONLY);
+        if (fd < 0)
+            continue; /* ueventd may not have set the permissions yet */
+        char name[80];
+        if (ioctl(fd, EVIOCGNAME(sizeof(name) - 1), &name) < 1)
+            name[0] = '\0';
+        if (!strcmp(name, inputName))
+            return fd;
+        close(fd);
+        known.insert(node);
+    }
+    return -1;
+}
+
 AkmSensor::AkmSensor()
 : SensorBase(NULL, NULL),
       mEnabled(0),
@@ -63,9 +109,17 @@ AkmSensor::AkmSensor()
     /* Open the library before opening the input device.  The library
      * creates a uinput device.
      */
+    std::set<std::string> knownNodes = listInputNodes();
     if (loadAKMLibrary() == 0) {
         data_name = "compass_sensor";
         data_fd = openInput("compass_sensor");
+        /* ueventd creates the node asynchronously, so it may not exist yet. */
+        for (int i = 0; data_fd < 0 && i < kCompassOpenTries; i++) {
+            usleep(kCompassOpenDelayUs);
+            data_fd = openNewInput("compass_sensor", knownNodes);
+            ALOGI_IF(data_fd >= 0, "AkmSensor: compass_sensor appeared after %d ms",
+                    (i + 1) * int(kCompassOpenDelayUs / 1000));
+        }
     }
 
     memset(mPendingEvents, 0, sizeof(mPendingEvents));
